@@ -1,4 +1,5 @@
 import { CheckCircle, Clock, ListTodo, Zap } from "lucide-react";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -13,7 +14,14 @@ export default function Home() {
             <ListTodo className="h-6 w-6 text-primary" />
             <span className="text-xl font-bold">My Todo</span>
           </div>
-          <div className="flex items-center gap-4">user</div>
+          <div className="flex items-center gap-4">
+            <SignedOut>
+              <SignInButton />
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </div>
       </header>
       <main className="flex-1">
