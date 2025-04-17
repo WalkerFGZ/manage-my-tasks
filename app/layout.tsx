@@ -30,6 +30,8 @@ export default function RootLayout({
       <html lang="en" className="w-full">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+          suppressHydrationWarning
+          data-lt-installed
         >
           {children}
         </body>

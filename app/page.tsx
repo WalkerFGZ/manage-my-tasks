@@ -1,30 +1,15 @@
 import { CheckCircle, Clock, ListTodo, Zap } from "lucide-react";
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 import { Button } from "@/components/ui/button";
+import Header from "@/components/header";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 w-full flex justify-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ListTodo className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">My Todo</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <SignedOut>
-              <SignInButton />
-            </SignedOut>
-            <SignedIn>
-              <UserButton />
-            </SignedIn>
-          </div>
-        </div>
-      </header>
       <main className="flex-1">
+        <Header />
         <section className="w-full flex justify-center py-12 md:py-24 lg:py-32 ">
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
@@ -153,7 +138,7 @@ export default function Home() {
             <a href="https://www.linkedin.com/in/afgallegoz2/">
               Andres Gallego
             </a>{" "}
-            &copy; {new Date().getFullYear()} My Todo. All rights reserved.
+            &copy; 2025 My Todo. All rights reserved.
           </p>
         </div>
       </footer>
