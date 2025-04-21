@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import CreateTaskModal from "@/components/create-task-modal";
 import DailyProgressBar from "@/components/daily-progress-bar";
 import { Plus } from "lucide-react";
 
@@ -18,6 +19,7 @@ export default function Tasks() {
       <div className="mt-8">
         <Button className="cursor-pointer">
           <Plus /> New Task
+          <CreateTaskModal />
         </Button>
       </div>
 
