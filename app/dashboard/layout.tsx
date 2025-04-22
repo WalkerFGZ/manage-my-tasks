@@ -10,7 +10,6 @@ export default async function DashBoardLayout({
   children: ReactNode;
 }) {
   const user = await currentUser();
-  console.log(user);
   if (!user) return <div>Not Signed In</div>;
   return (
     <SidebarProvider>

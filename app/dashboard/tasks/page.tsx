@@ -1,7 +1,6 @@
-import { Button } from "@/components/ui/button";
 import CreateTaskModal from "@/components/create-task-modal";
 import DailyProgressBar from "@/components/daily-progress-bar";
-import { Plus } from "lucide-react";
+import TaskCard from "@/components/task-card";
 
 export default function Tasks() {
   return (
@@ -17,13 +16,12 @@ export default function Tasks() {
       </div>
 
       <div className="mt-8">
-        <Button className="cursor-pointer">
-          <Plus /> New Task
-          <CreateTaskModal />
-        </Button>
+        <CreateTaskModal />
       </div>
 
-      <div>Cards</div>
+      <div>
+        <TaskCard />
+      </div>
     </section>
   );
 }

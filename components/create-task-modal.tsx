@@ -1,36 +1,19 @@
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { Dialog, DialogTrigger } from "./ui/dialog";
 
 import { Button } from "@/components/ui/button";
+import CreateNewTaskForm from "./create-task-form";
+import { Plus } from "lucide-react";
 
 export default function CreateTaskModal() {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">Show Dialog</Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction>Continue</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="cursor-pointer">
+          <Plus />
+          New Task
+        </Button>
+      </DialogTrigger>
+      <CreateNewTaskForm />
+    </Dialog>
   );
 }
