@@ -1,4 +1,4 @@
-import { Progress } from "./ui/progress";
+import { Progress } from "../ui/progress";
 
 export default function DailyProgressBar() {
   return (

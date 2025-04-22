@@ -8,9 +8,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "../ui/card";
 
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Checkbox } from "@radix-ui/react-checkbox";
 import { cn } from "@/lib/utils";
 

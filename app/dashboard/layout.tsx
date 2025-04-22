@@ -1,6 +1,6 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
-import { AppSideBar } from "@/components/app-side-bar";
+import { AppSideBar } from "@/components/layout/app-side-bar";
 import { ReactNode } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 

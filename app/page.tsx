@@ -1,7 +1,7 @@
 import { CheckCircle, Clock, ListTodo, Zap } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import Header from "@/components/header";
+import Header from "@/components/layout/header";
 import Image from "next/image";
 import Link from "next/link";
 

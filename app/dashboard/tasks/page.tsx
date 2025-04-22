@@ -1,6 +1,6 @@
-import CreateTaskModal from "@/components/create-task-modal";
-import DailyProgressBar from "@/components/daily-progress-bar";
-import TaskCard from "@/components/task-card";
+import CreateTaskModal from "@/components/tasks/create-task-modal";
+import DailyProgressBar from "@/components/tasks/daily-progress-bar";
+import TaskCard from "@/components/tasks/task-card";
 
 export default function Tasks() {
   return (

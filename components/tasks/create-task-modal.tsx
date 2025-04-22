@@ -1,4 +1,4 @@
-import { Dialog, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import { Button } from "@/components/ui/button";
 import CreateNewTaskForm from "./create-task-form";
