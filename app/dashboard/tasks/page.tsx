@@ -1,8 +1,12 @@
 import CreateTaskModal from "@/components/tasks/create-task-modal";
 import DailyProgressBar from "@/components/tasks/daily-progress-bar";
 import TaskCard from "@/components/tasks/task-card";
+import { supabase } from "@/lib/supabase/supabase";
 
-export default function Tasks() {
+export default async function Tasks() {
+  const { data: todos } = await supabase.from("todos").select();
+
+  console.log(todos);
   return (
     <section className="w-full px-8">
       <div className="flex flex-col">
