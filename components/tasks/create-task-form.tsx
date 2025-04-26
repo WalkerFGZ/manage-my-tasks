@@ -25,6 +25,7 @@ import {
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import { createTodo } from "@/app/dashboard/tasks/action";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,11 +35,12 @@ const formSchema = z.object({
   description: z.string().optional(),
   priority: z.enum(["low", "medium", "high"] as const),
   time: z.string().optional(),
+  isCompleted: z.boolean(),
 });
 
-function onSubmit(values: z.infer<typeof formSchema>) {
-  debugger;
-  console.log(values);
+async function onSubmit(values: z.infer<typeof formSchema>) {
+  const resp = await createTodo(values);
+  console.log("RES FORM TSX", resp);
 }
 
 export default function CreateNewTaskForm() {
@@ -48,7 +50,8 @@ export default function CreateNewTaskForm() {
       title: "",
       description: "",
       priority: "low",
-      time: "",
+      time: undefined,
+      isCompleted: false,
     },
   });
   return (
