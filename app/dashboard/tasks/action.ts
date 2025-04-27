@@ -6,10 +6,9 @@ import { auth } from "@clerk/nextjs/server";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export async function getTodo(userId: string) {
-  const res = await fetch("/api/todos", {
+  const res = await fetch(`${BASE_URL}/api/todos?userId=${userId}`, {
     method: "GET",
-    headers: { "Content-type": "application/json" },
-    body: JSON.stringify({ userId }),
+    headers: { "Content-Type": "application/json" },
   });
   if (!res.ok) {
     throw new Error("Error fetching TODOs");

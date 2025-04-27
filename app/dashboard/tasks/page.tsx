@@ -1,6 +1,6 @@
 import CreateTaskModal from "@/components/tasks/create-task-modal";
 import DailyProgressBar from "@/components/tasks/daily-progress-bar";
-import TaskCard from "@/components/tasks/task-card";
+import ListCards from "@/components/tasks/list-cards";
 
 export default function Tasks() {
   return (
@@ -15,13 +15,13 @@ export default function Tasks() {
         <DailyProgressBar />
       </div>
 
-      <div className="mt-8">
+      <section className="mt-8">
         <CreateTaskModal />
-      </div>
+      </section>
 
-      <div>
-        <TaskCard />
-      </div>
+      <section className="mt-6">
+        <ListCards />
+      </section>
     </section>
   );
 }

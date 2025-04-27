@@ -2,8 +2,16 @@ import { NextResponse } from "next/server";
 import { TodoForm } from "@/types";
 import { supabase } from "@/lib/supabase/supabase";
 
-export async function GET() {
-  const { data, error } = await supabase.from("todos").select();
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const userId = searchParams.get("userId");
+
+  console.log("USER DI", userId);
+  const { data, error } = await supabase
+    .from("todos")
+    .select()
+    .eq("user_id", userId);
+
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
