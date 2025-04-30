@@ -14,8 +14,8 @@ export default async function DashBoardLayout({
   return (
     <SidebarProvider>
       <AppSideBar />
-      <main className="w-full">
-        <SidebarTrigger />
+      <main className="w-full ">
+        <SidebarTrigger className="cursor-pointer p-5" />
         {children}
       </main>
     </SidebarProvider>

@@ -1,17 +1,19 @@
 import "./globals.css";
 
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Nunito } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const nunito = Nunito({
+  variable: "--font-nunito",
+  weight: ["400", "700"],
   subsets: ["latin"],
 });
 
@@ -29,7 +31,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="w-full">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased dark`}
+          className={`${inter.variable} ${nunito.variable}  antialiased dark`}
           suppressHydrationWarning
           data-lt-installed
         >
