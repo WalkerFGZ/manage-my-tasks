@@ -1,27 +1,38 @@
 import CreateTaskModal from "@/components/tasks/create-task-modal";
-import DailyProgressBar from "@/components/tasks/daily-progress-bar";
-import ListCards from "@/components/tasks/list-cards";
+import { Separator } from "@/components/ui/separator";
+import TaskItem from "@/components/tasks/task-item";
 
 export default function Tasks() {
   return (
-    <section className="w-full px-8">
-      <div className="flex flex-col">
-        <div>
-          <h2 className="text-3xl font-bold text-white">Tasks</h2>
-          <p className="text-gray-400 mt-2">
-            Manage your daily tasks and track your progress
-          </p>
-        </div>
-        <DailyProgressBar />
-      </div>
+    <section className="w-full flex min-h-[calc(100%-40px)] justify-center px-8 font-inter">
+      <div className="max-w-[700px] w-full min-h-[calc(100%-40px)] flex flex-col">
+        <div className="flex flex-col gap-1">
+          <h4 className="text-xl font-bold">Buenas noches, Andres 🌙</h4>
+          <span className="text-sm text-gray-300">
+            martes, 29 de abril de 2025
+          </span>
 
-      <section className="mt-8">
-        <CreateTaskModal />
-      </section>
+          <Separator className="my-2" />
+
+          <section className="w-full flex justify-end">
+            <CreateTaskModal />
+          </section>
+        </div>
+
+        <Separator className="my-2" />
+
+        <section className="flex flex-col gap-4">
+          <TaskItem />
+          <TaskItem />
+          <TaskItem />
+        </section>
+      </div>
+      {/* 
+      
 
       <section className="mt-6">
         <ListCards />
-      </section>
+      </section> */}
     </section>
   );
 }

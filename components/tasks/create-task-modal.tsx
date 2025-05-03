@@ -1,17 +1,17 @@
 import { Dialog, DialogTrigger } from "../ui/dialog";
 
-import { Button } from "@/components/ui/button";
 import CreateNewTaskForm from "./create-task-form";
 import { Plus } from "lucide-react";
+import { RippleButton } from "../animate-ui/buttons/ripple";
 
 export default function CreateTaskModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="cursor-pointer">
-          <Plus />
+        <RippleButton variant="outline" className="">
+          <Plus className="text-purple-300" />
           New Task
-        </Button>
+        </RippleButton>
       </DialogTrigger>
       <CreateNewTaskForm />
     </Dialog>
