@@ -4,6 +4,7 @@ import { Inter, Nunito } from "next/font/google";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
+import { ReactQueryClientProvider } from "@/providers/ReactQueryClientProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -29,15 +30,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className="w-full">
-        <body
-          className={`${inter.variable} ${nunito.variable}  antialiased dark`}
-          suppressHydrationWarning
-          data-lt-installed
-        >
-          {children}
-        </body>
-      </html>
+      <ReactQueryClientProvider>
+        <html lang="en" className="w-full">
+          <body
+            className={`${inter.variable} ${nunito.variable}  antialiased dark`}
+            suppressHydrationWarning
+            data-lt-installed
+          >
+            {children}
+          </body>
+        </html>
+      </ReactQueryClientProvider>
     </ClerkProvider>
   );
 }
