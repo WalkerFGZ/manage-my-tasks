@@ -24,6 +24,7 @@ export async function createTodo(todo: TodoForm) {
     throw new Error("User not authenticated");
   }
 
+  console.log("TODO", todo);
   const res = await fetch(`${BASE_URL}/api/todos`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

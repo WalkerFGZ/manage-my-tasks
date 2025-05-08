@@ -11,10 +11,11 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
+import { Todo } from "@/types";
 import { cn } from "@/lib/utils";
 import { priorityColors } from "@/lib/constants";
 
-export default function TaskItem() {
+export default function TaskItem({ todo }: { todo: Todo }) {
   return (
     <Card className="py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75">
       <CardContent>
@@ -26,24 +27,26 @@ export default function TaskItem() {
               </div>
               <div className="w-full flex flex-col gap-0">
                 <div className="flex flex-row justify-between">
-                  <label>Ir a la tienda</label>
+                  <label>{todo.title}</label>
 
                   <div className="flex flex-row gap-2">
                     <Badge
                       variant="outline"
                       className={cn(priorityColors["low"], "ml-auto")}
                     >
-                      high
+                      {todo.priority}
                     </Badge>
                     <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit">
                       <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
-                      <span className="text-[13px] text-purple-400">11:30</span>
+                      <span className="text-[13px] text-purple-400">
+                        {todo.time}
+                      </span>
                     </div>
                   </div>
                 </div>
 
                 <span className="text-sm text-gray-300 p-0 m-0">
-                  Description
+                  {todo.description}
                 </span>
               </div>
             </div>

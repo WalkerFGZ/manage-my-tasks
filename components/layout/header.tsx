@@ -1,43 +1,54 @@
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignInButton, SignedOut, UserButton } from "@clerk/nextjs";
 
 import Link from "next/link";
 import { ListTodo } from "lucide-react";
+import { RippleButton } from "../animate-ui/buttons/ripple";
 import { auth } from "@clerk/nextjs/server";
 
 export default async function Header() {
   const { userId } = await auth();
   return (
-    <header className="sticky top-0 z-50 w-full flex justify-center border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between">
+    <header className="sticky px-8 w-full bg-background/95 backdrop-blur border-b border-transparent shadow-none">
+      <div className=" flex h-16 items-center justify-between">
+        <Link
+          href="/"
+          className="flex items-center gap-2 hover:opacity-80 transition cursor-pointer"
+        >
+          <ListTodo className="h-6 w-6 text-purple-100" />
+          <span className="text-xl font-bold tracking-tight text-purple-100">
+            My Todo
+          </span>
+        </Link>
         <div className="flex items-center gap-2">
-          <ListTodo className="h-6 w-6 text-primary" />
-          <span className="text-xl font-bold">My Todo</span>
-
           {userId ? (
-            <div className="ml-4 flex flex-row gap-2">
+            <>
               <Link
                 href="/dashboard"
-                className="hover:text-gray-600 text-gray-600"
+                className="text-sm font-medium px-3 py-1 rounded cursor-pointer text-purple-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
               >
                 Dashboard
               </Link>
               <Link
                 href="/dashboard/tasks"
-                className="hover:text-gray-600 text-gray-600"
+                className="text-sm font-medium px-3 py-1 rounded cursor-pointer text-purple-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
               >
                 Tasks
               </Link>
-            </div>
-          ) : null}
-        </div>
-
-        <div className="flex items-center gap-4">
-          <SignedOut>
-            <SignInButton />
-          </SignedOut>
-          <SignedIn>
-            <UserButton />
-          </SignedIn>
+              <UserButton />
+            </>
+          ) : (
+            <SignedOut>
+              <SignInButton mode="modal">
+                <RippleButton
+                  variant="default"
+                  size="sm"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white cursor-pointer transition-colors"
+                >
+                  <span>Sign In</span>
+                </RippleButton>
+              </SignInButton>
+            </SignedOut>
+          )}
         </div>
       </div>
     </header>

@@ -1,6 +1,7 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 import { AppSideBar } from "@/components/layout/app-side-bar";
+import { NotSignedIn } from "@/components/auth/not-signed-in";
 import { ReactNode } from "react";
 import { currentUser } from "@clerk/nextjs/server";
 
@@ -10,7 +11,7 @@ export default async function DashBoardLayout({
   children: ReactNode;
 }) {
   const user = await currentUser();
-  if (!user) return <div>Not Signed In</div>;
+  if (!user) return <NotSignedIn />;
   return (
     <SidebarProvider>
       <AppSideBar />
