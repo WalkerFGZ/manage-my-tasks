@@ -1,3 +1,4 @@
+import CreateNewTask from "@/components/tasks/create-new-task";
 import ListTasks from "@/components/tasks/list-tasks";
 import { NotSignedIn } from "@/components/auth/not-signed-in";
 import { Separator } from "@/components/ui/separator";
@@ -19,21 +20,17 @@ export default async function Tasks() {
 
           <Separator className="my-2" />
 
-          <section className="w-full flex justify-end">create</section>
+          <section className="w-full flex justify-end">
+            <CreateNewTask />
+          </section>
         </div>
 
-        <Separator className="my-2" />
+        <Separator className="my-3" />
 
         <section className="flex flex-col gap-4">
           <ListTasks userId={userId} />
         </section>
       </div>
-      {/* 
-      
-
-      <section className="mt-6">
-        <ListCards />
-      </section> */}
     </section>
   );
 }

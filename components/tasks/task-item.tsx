@@ -54,7 +54,6 @@ export default function TaskItem({ todo }: { todo: Todo }) {
             <CollapsibleTrigger asChild className="cursor-pointer">
               <Button variant="ghost" size="sm">
                 <ChevronsUpDown className="h-4 w-4" />
-                <span className="sr-only">Toggle</span>
               </Button>
             </CollapsibleTrigger>
           </div>
