@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { TodoForm } from "@/types";
+import { newTaskForm } from "@/types";
 import { supabase } from "@/lib/supabase/supabase";
 
 export async function GET(req: Request) {
@@ -10,7 +10,8 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from("todos")
     .select()
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -20,13 +21,13 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const { todo, userId }: { todo: TodoForm; userId: string } = await req.json();
+  const { todo, userId }: { todo: newTaskForm; userId: string } =
+    await req.json();
   const { data, error } = await supabase
     .from("todos")
     .insert({
       user_id: userId,
       title: todo.title,
-      description: todo.description,
       priority: todo.priority,
       time: todo.time,
     })

@@ -16,10 +16,9 @@ export interface Todo extends BaseModel {
   due_date?: string;
 }
 
-export interface TodoForm {
+export interface newTaskForm {
   title: string;
-  description?: string;
-  priority: Priority;
-  time?: string;
-  isCompleted: boolean;
+  time: string;
+  priority: string;
+  category: string;
 }

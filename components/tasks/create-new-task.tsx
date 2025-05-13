@@ -10,10 +10,21 @@ import { Plus, X } from "lucide-react";
 
 import NewTaskForm from "./new-task-form";
 import { RippleButton } from "../animate-ui/buttons/ripple";
+import { newTaskForm } from "@/types";
+import { useCreateTodo } from "@/hooks/use-tasks";
 import { useState } from "react";
 
 export default function CreateNewTask() {
   const [isOpen, setIsOpen] = useState(false);
+  const createTodo = useCreateTodo();
+
+  const handleSubmit = async (e: React.FormEvent, newTaskData: newTaskForm) => {
+    try {
+      await createTodo.mutateAsync(newTaskData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -21,7 +32,7 @@ export default function CreateNewTask() {
         <CardContent>
           <Collapsible open={isOpen} onOpenChange={setIsOpen}>
             <CollapsibleContent>
-              <NewTaskForm setIsOpen={setIsOpen} />
+              <NewTaskForm setIsOpen={setIsOpen} handleSubmit={handleSubmit} />
             </CollapsibleContent>
 
             <CollapsibleTrigger asChild hidden={isOpen}>
