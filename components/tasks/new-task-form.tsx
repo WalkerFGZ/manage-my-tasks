@@ -11,27 +11,42 @@ import {
 
 import { Input } from "../ui/input";
 import { RippleButton } from "../animate-ui/buttons/ripple";
+import { newTaskForm } from "@/types";
 import { useState } from "react";
 
 export default function NewTaskForm({
   setIsOpen,
+  handleSubmit,
 }: {
   setIsOpen: (open: boolean) => void;
+  handleSubmit: (e: React.FormEvent, newTaskData: newTaskForm) => void;
 }) {
+  const currentTime = new Date().toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+
   const [formData, setFormData] = useState({
     title: "",
-    description: "",
     priority: "low",
-    time: "00:00",
+    time: currentTime,
     category: "work",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    handleSubmit(e, formData);
+    setFormData({
+      title: "",
+      priority: "low",
+      time: currentTime,
+      category: "work",
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
+    <form onSubmit={onSubmit} className="mb-4">
       <div className="flex flex-col gap-2 font-nunito">
         <div className="flex flex-row gap-2">
           <Input
@@ -40,6 +55,7 @@ export default function NewTaskForm({
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
+            required
           />
 
           <Input
@@ -90,6 +106,7 @@ export default function NewTaskForm({
             variant="destructive"
             size="sm"
             onClick={() => setIsOpen(false)}
+            type="button"
           >
             <X className="size-5" />
             <span>Cancel</span>
@@ -99,6 +116,7 @@ export default function NewTaskForm({
             variant="outline"
             size="sm"
             className="hover:text-purple-400"
+            type="submit"
           >
             <Plus className="size-5" />
             <span>Save Task</span>

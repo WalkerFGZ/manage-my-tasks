@@ -5,6 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../animate-ui/radix/collapsible";
+import { cn, formatTimeForDisplay } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
@@ -12,7 +13,6 @@ import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
 import { Todo } from "@/types";
-import { cn } from "@/lib/utils";
 import { priorityColors } from "@/lib/constants";
 
 export default function TaskItem({ todo }: { todo: Todo }) {
@@ -32,16 +32,20 @@ export default function TaskItem({ todo }: { todo: Todo }) {
                   <div className="flex flex-row gap-2">
                     <Badge
                       variant="outline"
-                      className={cn(priorityColors["low"], "ml-auto")}
+                      className={cn(priorityColors[todo.priority], "ml-auto")}
                     >
                       {todo.priority}
                     </Badge>
-                    <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit">
-                      <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
-                      <span className="text-[13px] text-purple-400">
-                        {todo.time}
-                      </span>
-                    </div>
+                    {todo.time != null && todo.time !== "00:00:00" ? (
+                      <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit">
+                        <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
+                        <span className="text-[13px] text-purple-400">
+                          {formatTimeForDisplay(todo.time)}
+                        </span>
+                      </div>
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
 
