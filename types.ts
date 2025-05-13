@@ -1,19 +1,14 @@
-export interface BaseModel {
-  id: string;
-  created_at: Date;
-  updated_at: string;
-}
-
 export type Priority = "low" | "medium" | "high";
 
-export interface Todo extends BaseModel {
-  user_id?: string;
+export interface Task {
+  id: string;
   title: string;
-  description?: string;
   priority: Priority;
-  time?: string;
+  category: string;
+  time: string;
   is_completed: boolean;
-  due_date?: string;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface newTaskForm {

@@ -5,6 +5,7 @@ import { Inter, Nunito } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { ReactQueryClientProvider } from "@/providers/ReactQueryClientProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -38,6 +39,7 @@ export default function RootLayout({
             data-lt-installed
           >
             {children}
+            <Toaster position="top-right" expand={true} richColors />
           </body>
         </html>
       </ReactQueryClientProvider>

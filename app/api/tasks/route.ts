@@ -1,14 +1,14 @@
+import { Task, newTaskForm } from "@/types";
+
 import { NextResponse } from "next/server";
-import { newTaskForm } from "@/types";
 import { supabase } from "@/lib/supabase/supabase";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const userId = searchParams.get("userId");
 
-  console.log("USER DI", userId);
   const { data, error } = await supabase
-    .from("todos")
+    .from("tasks")
     .select()
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -21,19 +21,38 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const { todo, userId }: { todo: newTaskForm; userId: string } =
+  const { task, userId }: { task: newTaskForm; userId: string } =
     await req.json();
   const { data, error } = await supabase
-    .from("todos")
+    .from("tasks")
     .insert({
       user_id: userId,
-      title: todo.title,
-      priority: todo.priority,
-      time: todo.time,
+      title: task.title,
+      priority: task.priority,
+      time: task.time,
     })
     .select();
 
-  console.log("POST FUNCTION", data, error);
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}
+
+export async function PUT(req: Request) {
+  const { task }: { task: Task } = await req.json();
+
+  const { data, error } = await supabase
+    .from("tasks")
+    .update({
+      title: task.title,
+      priority: task.priority,
+      time: task.time,
+      is_completed: task.is_completed,
+    })
+    .eq("id", task.id)
+    .select();
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

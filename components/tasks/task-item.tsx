@@ -12,10 +12,30 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
-import { Todo } from "@/types";
+import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
+import { toast } from "sonner";
+import { useUpdateTask } from "@/hooks/use-tasks";
 
-export default function TaskItem({ todo }: { todo: Todo }) {
+export default function TaskItem({ task }: { task: Task }) {
+  const updateTask = useUpdateTask();
+  const handleCheckboxChange = async (task: Task) => {
+    const newData = {
+      ...task,
+      is_completed: !task.is_completed,
+    };
+    try {
+      await updateTask.mutateAsync(newData);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to update",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
+
   return (
     <Card className="py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75">
       <CardContent>
@@ -23,24 +43,28 @@ export default function TaskItem({ todo }: { todo: Todo }) {
           <div className="flex flex-row justify-between items-center">
             <div className="w-full flex flex-row items-center gap-3">
               <div>
-                <Checkbox className="cursor-pointer size-4.5" />
+                <Checkbox
+                  checked={task.is_completed}
+                  className="cursor-pointer size-4.5"
+                  onChange={() => handleCheckboxChange(task)}
+                />
               </div>
               <div className="w-full flex flex-col gap-0">
                 <div className="flex flex-row justify-between">
-                  <label>{todo.title}</label>
+                  <label>{task.title}</label>
 
                   <div className="flex flex-row gap-2">
                     <Badge
                       variant="outline"
-                      className={cn(priorityColors[todo.priority], "ml-auto")}
+                      className={cn(priorityColors[task.priority], "ml-auto")}
                     >
-                      {todo.priority}
+                      {task.priority}
                     </Badge>
-                    {todo.time != null && todo.time !== "00:00:00" ? (
+                    {task.time != null && task.time !== "00:00:00" ? (
                       <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit">
                         <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
                         <span className="text-[13px] text-purple-400">
-                          {formatTimeForDisplay(todo.time)}
+                          {formatTimeForDisplay(task.time)}
                         </span>
                       </div>
                     ) : (
@@ -48,10 +72,6 @@ export default function TaskItem({ todo }: { todo: Todo }) {
                     )}
                   </div>
                 </div>
-
-                <span className="text-sm text-gray-300 p-0 m-0">
-                  {todo.description}
-                </span>
               </div>
             </div>
 

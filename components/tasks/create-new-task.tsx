@@ -11,18 +11,24 @@ import { Plus, X } from "lucide-react";
 import NewTaskForm from "./new-task-form";
 import { RippleButton } from "../animate-ui/buttons/ripple";
 import { newTaskForm } from "@/types";
-import { useCreateTodo } from "@/hooks/use-tasks";
+import { toast } from "sonner";
+import { useCreateTask } from "@/hooks/use-tasks";
 import { useState } from "react";
 
 export default function CreateNewTask() {
   const [isOpen, setIsOpen] = useState(false);
-  const createTodo = useCreateTodo();
+  const createTask = useCreateTask();
 
   const handleSubmit = async (e: React.FormEvent, newTaskData: newTaskForm) => {
     try {
-      await createTodo.mutateAsync(newTaskData);
+      await createTask.mutateAsync(newTaskData);
     } catch (error) {
-      console.log(error);
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to create task",
+        duration: 5000,
+        closeButton: true,
+      });
     }
   };
 

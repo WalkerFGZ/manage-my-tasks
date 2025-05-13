@@ -131,14 +131,14 @@ export default function Home() {
         <div className="container flex flex-col items-center justify-between gap-4 md:h-16 md:flex-row">
           <div className="flex items-center gap-2">
             <ListTodo className="h-5 w-5 text-primary" />
-            <span className="font-semibold">My Todo</span>
+            <span className="font-semibold">My Tasks</span>
           </div>
           <p className="text-sm text-muted-foreground">
             Made With Love By{" "}
             <a href="https://www.linkedin.com/in/afgallegoz2/">
               Andres Gallego
             </a>{" "}
-            &copy; 2025 My Todo. All rights reserved.
+            &copy; 2025 Manage My Tasks. All rights reserved.
           </p>
         </div>
       </footer>

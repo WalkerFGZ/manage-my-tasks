@@ -1,14 +1,12 @@
 "use client";
 
 import { ListTodo } from "lucide-react";
+import { Task } from "@/types";
 import TaskItem from "./task-item";
-import type { Todo } from "@/types";
-import { useTodos } from "@/hooks/use-tasks";
+import { useTasks } from "@/hooks/use-tasks";
 
 export default function ListTasks({ userId }: { userId: string }) {
-  const { data: todos, isLoading, isError } = useTodos({ userId });
-
-  console.log(todos, isLoading, isError);
+  const { data: tasks, isLoading, isError } = useTasks({ userId });
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -18,7 +16,7 @@ export default function ListTasks({ userId }: { userId: string }) {
     return <div>Error</div>;
   }
 
-  if (todos.length === 0) {
+  if (tasks.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <div className="rounded-full bg-primary/10 p-4 mb-4">
@@ -34,8 +32,8 @@ export default function ListTasks({ userId }: { userId: string }) {
 
   return (
     <>
-      {todos.map((todo: Todo) => (
-        <TaskItem key={todo.id} todo={todo} />
+      {tasks.map((task: Task) => (
+        <TaskItem key={task.id} task={task} />
       ))}
     </>
   );
