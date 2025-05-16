@@ -1,4 +1,5 @@
 import CreateNewTask from "@/components/tasks/create-new-task";
+import Greetings from "@/components/layout/greetings";
 import ListTasks from "@/components/tasks/list-tasks";
 import { NotSignedIn } from "@/components/auth/not-signed-in";
 import { Separator } from "@/components/ui/separator";
@@ -13,10 +14,7 @@ export default async function Tasks() {
     <section className="w-full flex min-h-[calc(100%-40px)] justify-center px-8 font-inter">
       <div className="max-w-[700px] w-full min-h-[calc(100%-40px)] flex flex-col">
         <div className="flex flex-col gap-1">
-          <h4 className="text-xl font-bold">Buenas noches, Andres 🌙</h4>
-          <span className="text-sm text-gray-300">
-            martes, 29 de abril de 2025
-          </span>
+          <Greetings />
 
           <Separator className="my-2" />
 
