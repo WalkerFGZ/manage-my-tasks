@@ -9,7 +9,12 @@ export async function GET(req: Request) {
 
   const { data, error } = await supabase
     .from("tasks")
-    .select()
+    .select(
+      `
+      *,
+      subtasks(*)
+    `
+    )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
 

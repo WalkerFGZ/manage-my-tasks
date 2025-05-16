@@ -14,30 +14,22 @@ import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
 import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
-import { toast } from "sonner";
-import { useUpdateTask } from "@/hooks/use-tasks";
 
-export default function TaskItem({ task }: { task: Task }) {
-  const updateTask = useUpdateTask();
-  const handleCheckboxChange = async (task: Task) => {
-    const newData = {
-      ...task,
-      is_completed: !task.is_completed,
-    };
-    try {
-      await updateTask.mutateAsync(newData);
-    } catch (error) {
-      toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Failed to update",
-        duration: 5000,
-        closeButton: true,
-      });
-    }
-  };
-
+export default function TaskItem({
+  task,
+  handleCheckboxChange,
+}: {
+  task: Task;
+  handleCheckboxChange: (task: Task) => void;
+}) {
   return (
-    <Card className="py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75">
+    <Card
+      className={cn(
+        "py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75",
+        task.is_completed &&
+          "bg-accent/20 hover:border-accent/20  opacity-60 hover:opacity-70 hover:scale-100"
+      )}
+    >
       <CardContent>
         <Collapsible>
           <div className="flex flex-row justify-between items-center">
@@ -51,7 +43,9 @@ export default function TaskItem({ task }: { task: Task }) {
               </div>
               <div className="w-full flex flex-col gap-0">
                 <div className="flex flex-row justify-between">
-                  <label>{task.title}</label>
+                  <label className={cn(task.is_completed && "line-through")}>
+                    {task.title}
+                  </label>
 
                   <div className="flex flex-row gap-2">
                     <Badge
@@ -93,10 +87,6 @@ export default function TaskItem({ task }: { task: Task }) {
             </div>
 
             <div className="pl-4">
-              <SubtaskItem />
-              <SubtaskItem />
-              <SubtaskItem />
-              <SubtaskItem />
               <SubtaskItem />
             </div>
           </CollapsibleContent>

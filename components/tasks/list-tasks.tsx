@@ -1,12 +1,34 @@
 "use client";
 
+import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
+
 import { ListTodo } from "lucide-react";
 import { Task } from "@/types";
 import TaskItem from "./task-item";
-import { useTasks } from "@/hooks/use-tasks";
+import { toast } from "sonner";
 
 export default function ListTasks({ userId }: { userId: string }) {
   const { data: tasks, isLoading, isError } = useTasks({ userId });
+  const updateTask = useUpdateTask();
+
+  console.log(tasks);
+
+  const handleCheckboxChange = async (task: Task) => {
+    const newData = {
+      ...task,
+      is_completed: !task.is_completed,
+    };
+    try {
+      await updateTask.mutateAsync(newData);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to update",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -33,7 +55,11 @@ export default function ListTasks({ userId }: { userId: string }) {
   return (
     <>
       {tasks.map((task: Task) => (
-        <TaskItem key={task.id} task={task} />
+        <TaskItem
+          key={task.id}
+          task={task}
+          handleCheckboxChange={handleCheckboxChange}
+        />
       ))}
     </>
   );
