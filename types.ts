@@ -15,7 +15,7 @@ export interface Task {
   is_completed: boolean;
   created_at: Date;
   updated_at: Date;
-  subTasks: SubTask[];
+  subtasks: SubTask[];
 }
 
 export interface newTaskForm {

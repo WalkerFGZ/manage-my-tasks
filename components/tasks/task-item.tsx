@@ -5,6 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../animate-ui/radix/collapsible";
+import { SubTask, Task } from "@/types";
 import { cn, formatTimeForDisplay } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
@@ -12,16 +13,18 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
-import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
 
 export default function TaskItem({
   task,
   handleCheckboxChange,
+  handleUpdateSubTask,
 }: {
   task: Task;
   handleCheckboxChange: (task: Task) => void;
+  handleUpdateSubTask: (subtask: SubTask) => void;
 }) {
+  debugger;
   return (
     <Card
       className={cn(
@@ -86,8 +89,16 @@ export default function TaskItem({
               />
             </div>
 
-            <div className="pl-4">
-              <SubtaskItem />
+            <div className="pl-4 pb-2">
+              {task.subtasks?.length > 0
+                ? task.subtasks.map((subtask) => (
+                    <SubtaskItem
+                      key={subtask.id}
+                      subtask={subtask}
+                      handleUpdateSubTask={handleUpdateSubTask}
+                    />
+                  ))
+                : ""}
             </div>
           </CollapsibleContent>
         </Collapsible>
