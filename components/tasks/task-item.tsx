@@ -5,7 +5,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../animate-ui/radix/collapsible";
-import { SubTask, Task } from "@/types";
 import { cn, formatTimeForDisplay } from "@/lib/utils";
 
 import { Badge } from "../ui/badge";
@@ -13,18 +12,72 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
+import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
+import { toast } from "sonner";
+import { useAuth } from "@clerk/nextjs";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUpdateTask } from "@/hooks/use-tasks";
 
-export default function TaskItem({
-  task,
-  handleCheckboxChange,
-  handleUpdateSubTask,
-}: {
-  task: Task;
-  handleCheckboxChange: (task: Task) => void;
-  handleUpdateSubTask: (subtask: SubTask) => void;
-}) {
-  debugger;
+export default function TaskItem({ task }: { task: Task }) {
+  const updateTask = useUpdateTask();
+  const queryClient = useQueryClient();
+  const { userId } = useAuth();
+
+  const handleCheckboxChange = async (task: Task) => {
+    const newData = {
+      ...task,
+      is_completed: !task.is_completed,
+    };
+    try {
+      await updateTask.mutateAsync(newData);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to update",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
+
+  const handleAddNewSubTask = (taskId: string) => {
+    const newSubTask = {
+      id: crypto.randomUUID(),
+      title: "",
+      is_completed: false,
+      task_id: taskId,
+      temp_task: true,
+      created_at: new Date(),
+    };
+
+    const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
+    let hasOpenSubtask: boolean = false;
+    previousTasks?.map((task) => {
+      task.subtasks.map((subtask) => {
+        if (subtask.temp_task) {
+          hasOpenSubtask = true;
+        }
+      });
+    });
+
+    if (hasOpenSubtask) {
+      toast.info("You have an open subtask, please complete it first.", {
+        duration: 5000,
+        closeButton: true,
+      });
+      return;
+    }
+
+    queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
+      return old.map((task) =>
+        task.id === taskId
+          ? { ...task, subtasks: [newSubTask, ...task.subtasks] }
+          : task
+      );
+    });
+  };
+
   return (
     <Card
       className={cn(
@@ -85,20 +138,23 @@ export default function TaskItem({
               <h4 className="text-sm text-gray-400 pb-2">Subtasks</h4>
               <Plus
                 size={18}
-                className="cursor-pointer hover:bg-input rounded-sm"
+                className="cursor-pointer hover:text-purple-500 rounded-sm transition-all duration-200 hover:scale-110"
+                onClick={() => handleAddNewSubTask(task.id)}
               />
             </div>
 
-            <div className="pl-4 pb-2">
-              {task.subtasks?.length > 0
-                ? task.subtasks.map((subtask) => (
-                    <SubtaskItem
-                      key={subtask.id}
-                      subtask={subtask}
-                      handleUpdateSubTask={handleUpdateSubTask}
-                    />
-                  ))
-                : ""}
+            <div className="pl-4 pb-2 flex flex-col gap-1.5">
+              {task.subtasks?.length > 0 ? (
+                task.subtasks.map((subtask) => (
+                  <SubtaskItem
+                    key={subtask.id}
+                    subtask={subtask}
+                    parentCompleted={task.is_completed}
+                  />
+                ))
+              ) : (
+                <div className="text-sm text-gray-400">No subtasks yet.</div>
+              )}
             </div>
           </CollapsibleContent>
         </Collapsible>

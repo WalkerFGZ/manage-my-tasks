@@ -5,6 +5,8 @@ export interface SubTask {
   task_id: string;
   title: string;
   is_completed: boolean;
+  temp_task?: boolean;
+  created_at: Date;
 }
 export interface Task {
   id: string;

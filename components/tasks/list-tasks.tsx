@@ -1,46 +1,12 @@
 "use client";
 
-import { SubTask, Task } from "@/types";
-import { useTasks, useUpdateTask } from "@/hooks/use-tasks";
-
 import { ListTodo } from "lucide-react";
+import { Task } from "@/types";
 import TaskItem from "./task-item";
-import { toast } from "sonner";
-import { useUpdateSubTask } from "@/hooks/use-subtasks";
+import { useTasks } from "@/hooks/use-tasks";
 
 export default function ListTasks({ userId }: { userId: string }) {
   const { data: tasks, isLoading, isError } = useTasks({ userId });
-  const updateTask = useUpdateTask();
-  const updateSubTask = useUpdateSubTask();
-  const handleCheckboxChange = async (task: Task) => {
-    const newData = {
-      ...task,
-      is_completed: !task.is_completed,
-    };
-    try {
-      await updateTask.mutateAsync(newData);
-    } catch (error) {
-      toast.error("Error", {
-        description:
-          error instanceof Error ? error.message : "Failed to update",
-        duration: 5000,
-        closeButton: true,
-      });
-    }
-  };
-
-  const handleUpdateSubTask = async (subtask: SubTask) => {
-    try {
-      await updateSubTask.mutateAsync(subtask);
-    } catch (error) {
-      toast.error("Error updating subtask", {
-        description:
-          error instanceof Error ? error.message : "Failed to update subtask",
-        duration: 5000,
-        closeButton: true,
-      });
-    }
-  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -67,12 +33,7 @@ export default function ListTasks({ userId }: { userId: string }) {
   return (
     <>
       {tasks.map((task: Task) => (
-        <TaskItem
-          key={task.id}
-          task={task}
-          handleCheckboxChange={handleCheckboxChange}
-          handleUpdateSubTask={handleUpdateSubTask}
-        />
+        <TaskItem key={task.id} task={task} />
       ))}
     </>
   );

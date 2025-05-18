@@ -22,7 +22,15 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  const sortedData = data.map((task: Task) => ({
+    ...task,
+    subtasks: task.subtasks.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    ),
+  }));
+
+  return NextResponse.json(sortedData);
 }
 
 export async function POST(req: Request) {
