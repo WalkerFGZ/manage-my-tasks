@@ -35,12 +35,14 @@ import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
+import { useCategory } from "@/context/CategoryProvider";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 export default function TaskItem({ task }: { task: Task }) {
   const [isEditing, setIsEditing] = useState(false);
   const [taskTitle, setTaskTitle] = useState(task.title);
+  const { category } = useCategory();
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const queryClient = useQueryClient();
@@ -93,10 +95,15 @@ export default function TaskItem({ task }: { task: Task }) {
       created_at: new Date(),
     };
 
-    const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
+    const previousTasks = queryClient.getQueryData<Task[]>([
+      "tasks",
+      userId,
+      category,
+    ]);
+
     let hasOpenSubtask: boolean = false;
     previousTasks?.map((task) => {
-      task.subtasks.map((subtask) => {
+      task?.subtasks?.map((subtask) => {
         if (subtask.temp_task) {
           hasOpenSubtask = true;
         }
@@ -111,13 +118,16 @@ export default function TaskItem({ task }: { task: Task }) {
       return;
     }
 
-    queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
-      return old.map((task) =>
-        task.id === taskId
-          ? { ...task, subtasks: [newSubTask, ...task.subtasks] }
-          : task
-      );
-    });
+    queryClient.setQueryData(
+      ["tasks", userId, category],
+      (old: Task[] = []) => {
+        return old.map((task) =>
+          task.id === taskId
+            ? { ...task, subtasks: [newSubTask, ...task.subtasks] }
+            : task
+        );
+      }
+    );
   };
   const handleDeleteTask = async (task: Task) => {
     setIsEditing(false);

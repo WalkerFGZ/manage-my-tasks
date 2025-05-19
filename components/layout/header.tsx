@@ -23,12 +23,6 @@ export default async function Header() {
           {userId ? (
             <>
               <Link
-                href="/dashboard"
-                className="text-sm font-medium px-3 py-1 rounded cursor-pointer text-purple-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link
                 href="/dashboard/tasks"
                 className="text-sm font-medium px-3 py-1 rounded cursor-pointer text-purple-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
               >

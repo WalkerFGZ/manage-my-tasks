@@ -2,6 +2,7 @@ import { Task, newTaskForm } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { useAuth } from "@clerk/nextjs";
+import { useCategory } from "@/context/CategoryProvider";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -31,9 +32,9 @@ export const useTasks = ({
 };
 
 export const useCreateTask = () => {
-  debugger;
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { category } = useCategory();
 
   return useMutation({
     mutationFn: async (newTaskData: newTaskForm) => {
@@ -62,6 +63,7 @@ export const useCreateTask = () => {
         id: tempId,
         ...newTask,
         is_completed: false,
+        subtasks: [],
       };
 
       queryClient.setQueryData(["tasks", userId, "all"], (old: Task[] = []) => [
@@ -90,6 +92,9 @@ export const useCreateTask = () => {
             old.filter((task) => task.id !== context?.optimisticTask.id)
         );
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks", userId, category] });
     },
   });
 };

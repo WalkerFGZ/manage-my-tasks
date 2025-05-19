@@ -2,12 +2,14 @@ import { SubTask, Task } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useAuth } from "@clerk/nextjs";
+import { useCategory } from "@/context/CategoryProvider";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
 export const useCreateSubTasks = () => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { category } = useCategory();
 
   return useMutation({
     mutationFn: async (subTaskData: SubTask) => {
@@ -29,35 +31,48 @@ export const useCreateSubTasks = () => {
     },
 
     onMutate: async (newSubTask) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
-
-      const previousTasks = queryClient.getQueryData(["tasks", userId]);
-
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
-        return old.map((task) =>
-          task.id === newSubTask.task_id
-            ? {
-                ...task,
-                subtasks: task.subtasks.map((subtask) =>
-                  subtask.id === newSubTask.id
-                    ? { ...newSubTask, temp_task: false }
-                    : subtask
-                ),
-              }
-            : task
-        );
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, category],
       });
+
+      const previousTasks = queryClient.getQueryData([
+        "tasks",
+        userId,
+        category,
+      ]);
+
+      queryClient.setQueryData(
+        ["tasks", userId, category],
+        (old: Task[] = []) => {
+          return old.map((task) =>
+            task.id === newSubTask.task_id
+              ? {
+                  ...task,
+                  subtasks: task.subtasks.some(
+                    (subtask) => subtask.id === newSubTask.id
+                  )
+                    ? task.subtasks.map((subtask) =>
+                        subtask.id === newSubTask.id
+                          ? { ...newSubTask, temp_task: false }
+                          : subtask
+                      )
+                    : [...task.subtasks, { ...newSubTask, temp_task: false }],
+                }
+              : task
+          );
+        }
+      );
 
       return { previousTasks };
     },
 
     onError: (err, newSubTask, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(["tasks", userId], context.previousTasks);
+        queryClient.setQueryData(
+          ["tasks", userId, category],
+          context.previousTasks
+        );
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", userId] });
     },
   });
 };
@@ -65,6 +80,7 @@ export const useCreateSubTasks = () => {
 export const useUpdateSubTask = () => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { category } = useCategory();
   return useMutation({
     mutationFn: async (subTaskData: SubTask) => {
       const response = await fetch(`${BASE_URL}/api/subtasks`, {
@@ -84,14 +100,17 @@ export const useUpdateSubTask = () => {
       return response.json();
     },
     onMutate: async (subTaskData: SubTask) => {
-      // Cancel any outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, category],
+      });
 
-      // Snapshot the previous value
-      const previousTasks = queryClient.getQueryData(["tasks", userId]);
+      const previousTasks = queryClient.getQueryData([
+        "tasks",
+        userId,
+        category,
+      ]);
 
-      // Optimistically update to the new value
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
+      queryClient.setQueryData(["tasks", userId, "all"], (old: Task[] = []) => {
         return old.map((task) => ({
           ...task,
           subtasks: task.subtasks.map((subtask) =>
@@ -100,22 +119,37 @@ export const useUpdateSubTask = () => {
         }));
       });
 
-      // Return a context object with the snapshotted value
+      if (category !== "all") {
+        queryClient.setQueryData(
+          ["tasks", userId, category],
+          (old: Task[] = []) => {
+            return old.map((task) => ({
+              ...task,
+              subtasks: task.subtasks.map((subtask) =>
+                subtask.id === subTaskData.id ? subTaskData : subtask
+              ),
+            }));
+          }
+        );
+      }
+
       return { previousTasks };
     },
     onError: (err, newSubTask, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousTasks) {
-        queryClient.setQueryData(["tasks", userId], context.previousTasks);
+        queryClient.setQueryData(
+          ["tasks", userId, category],
+          context.previousTasks
+        );
       }
     },
-    // Remove onSettled to prevent automatic refetch
   });
 };
 
 export const useDeleteSubTask = () => {
   const { userId } = useAuth();
   const queryClient = useQueryClient();
+  const { category } = useCategory();
 
   return useMutation({
     mutationFn: async (subtask_id: string) => {
@@ -136,11 +170,17 @@ export const useDeleteSubTask = () => {
       return response.json();
     },
     onMutate: async (subtask_id: string) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, category],
+      });
 
-      const previousTasks = queryClient.getQueryData(["tasks", userId]);
+      const previousTasks = queryClient.getQueryData([
+        "tasks",
+        userId,
+        category,
+      ]);
 
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
+      queryClient.setQueryData(["tasks", userId, category], (old: Task[]) => {
         return old.map((task) => ({
           ...task,
           subtasks: task.subtasks.filter(
@@ -153,7 +193,10 @@ export const useDeleteSubTask = () => {
     },
     onError: (err, subtask_id, context) => {
       if (context?.previousTasks) {
-        queryClient.setQueryData(["tasks", userId], context.previousTasks);
+        queryClient.setQueryData(
+          ["tasks", userId, category],
+          context.previousTasks
+        );
       }
     },
   });
