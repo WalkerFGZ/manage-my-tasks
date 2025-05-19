@@ -1,6 +1,6 @@
 "use client";
 
-import { Briefcase, Home, List, ListTodo, User } from "lucide-react";
+import { Briefcase, List, ListTodo, Star, User } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -25,12 +25,6 @@ export function AppSideBar() {
   const pathname = usePathname();
   const { category, setCategory } = useCategory();
   const items = [
-    {
-      title: "Home",
-      url: "/dashboard",
-      icon: Home,
-      color: "#863C48",
-    },
     {
       title: "Tasks",
       url: "/dashboard/tasks",
@@ -59,7 +53,7 @@ export function AppSideBar() {
                 <SidebarMenuItem key={item.title} className="">
                   <SidebarMenuButton
                     asChild
-                    className="h-12 px-3 text-md font-medium transition-colors rounded-2xl"
+                    className="h-12 mt-2 px-3 text-md font-medium transition-colors rounded-2xl"
                   >
                     <Link
                       href={item.url}
@@ -125,8 +119,24 @@ export function AppSideBar() {
                   onClick={() => setCategory("work")}
                 >
                   <article>
-                    <Briefcase color="#f59e0b" />
+                    <Briefcase color="#48fffd" />
                     <span>Work</span>
+                  </article>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem key={"shared"}>
+                <SidebarMenuButton
+                  disabled
+                  className={cn(
+                    "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
+                    category === "shared" && "bg-muted text-foreground"
+                  )}
+                  onClick={() => setCategory("shared")}
+                >
+                  <article className="flex flex-row items-center gap-2">
+                    <Star color="#f59e0b" />
+                    <span>Share With Friends (Coming Soon)</span>
                   </article>
                 </SidebarMenuButton>
               </SidebarMenuItem>

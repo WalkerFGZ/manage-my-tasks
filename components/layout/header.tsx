@@ -16,7 +16,7 @@ export default async function Header() {
         >
           <ListTodo className="h-6 w-6 text-purple-100" />
           <span className="text-xl font-bold tracking-tight text-purple-100">
-            My Todo
+            Better Tasks
           </span>
         </Link>
         <div className="flex items-center gap-2">

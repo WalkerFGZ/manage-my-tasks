@@ -6,6 +6,7 @@ import {
   Edit,
   MoreVertical,
   Plus,
+  Share,
   Trash,
   User,
 } from "lucide-react";
@@ -227,6 +228,15 @@ export default function TaskItem({ task }: { task: Task }) {
                           >
                             <Trash className="h-3.5 w-3.5" />
                             <span>Delete</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex items-center gap-2 cursor-pointer"
+                            onSelect={(e) => {
+                              e.preventDefault();
+                            }}
+                          >
+                            <Share className="h-3.5 w-3.5" />
+                            <span>Share (Coming Soon)</span>
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>

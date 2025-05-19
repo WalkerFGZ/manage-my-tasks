@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 
-type Category = "all" | "work" | "personal";
+type Category = "all" | "work" | "personal" | "shared";
 
 interface CategoryContextType {
   category: Category;
