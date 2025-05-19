@@ -39,3 +39,18 @@ export async function PUT(req: Request) {
 
   return NextResponse.json(data);
 }
+
+export async function DELETE(req: Request) {
+  const { subTaskId }: { subTaskId: string } = await req.json();
+  const { data, error } = await supabase
+    .from("subtasks")
+    .delete()
+    .eq("id", subTaskId)
+    .select();
+
+  if (error) {
+    NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}

@@ -112,3 +112,49 @@ export const useUpdateSubTask = () => {
     // Remove onSettled to prevent automatic refetch
   });
 };
+
+export const useDeleteSubTask = () => {
+  const { userId } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (subtask_id: string) => {
+      const response = await fetch(`${BASE_URL}/api/subtasks`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subTaskId: subtask_id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete subtask");
+      }
+
+      return response.json();
+    },
+    onMutate: async (subtask_id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
+
+      const previousTasks = queryClient.getQueryData(["tasks", userId]);
+
+      queryClient.setQueryData(["tasks", userId], (old: Task[]) => {
+        return old.map((task) => ({
+          ...task,
+          subtasks: task.subtasks.filter(
+            (subtask) => subtask.id !== subtask_id
+          ),
+        }));
+      });
+
+      return { previousTasks };
+    },
+    onError: (err, subtask_id, context) => {
+      if (context?.previousTasks) {
+        queryClient.setQueryData(["tasks", userId], context.previousTasks);
+      }
+    },
+  });
+};

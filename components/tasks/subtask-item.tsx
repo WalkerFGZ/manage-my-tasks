@@ -1,5 +1,9 @@
 import { Check, Edit, Trash } from "lucide-react";
-import { useCreateSubTasks, useUpdateSubTask } from "@/hooks/use-subtasks";
+import {
+  useCreateSubTasks,
+  useDeleteSubTask,
+  useUpdateSubTask,
+} from "@/hooks/use-subtasks";
 
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Input } from "../ui/input";
@@ -21,6 +25,7 @@ export default function SubtaskItem({
   const [isEditing, setIsEditing] = useState(subtask?.temp_task || false);
   const updateSubTask = useUpdateSubTask();
   const createSubTask = useCreateSubTasks();
+  const deleteSubTask = useDeleteSubTask();
 
   const handleCreateSubTask = async (subTask: SubTask) => {
     const newSubTask = {
@@ -77,6 +82,19 @@ export default function SubtaskItem({
       toast.error("Error updating subtask", {
         description:
           error instanceof Error ? error.message : "Failed to update subtask",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
+
+  const handleDeleteSubTask = async (subtask_id: string) => {
+    try {
+      await deleteSubTask.mutateAsync(subtask_id);
+    } catch (error) {
+      toast.error("Error deleting subtask", {
+        description:
+          error instanceof Error ? error.message : "Failed to delete subtask",
         duration: 5000,
         closeButton: true,
       });
@@ -149,6 +167,11 @@ export default function SubtaskItem({
               (subtask.is_completed || parentCompleted) &&
                 "text-gray-400 hover:text-gray-400 hover:scale-none cursor-not-allowed"
             )}
+            onClick={() => {
+              if (!subtask.is_completed && !parentCompleted) {
+                handleDeleteSubTask(subtask.id);
+              }
+            }}
           />
         </div>
       )}
