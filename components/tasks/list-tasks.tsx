@@ -3,10 +3,13 @@
 import { ListTodo } from "lucide-react";
 import { Task } from "@/types";
 import TaskItem from "./task-item";
+import { useCategory } from "@/context/CategoryProvider";
 import { useTasks } from "@/hooks/use-tasks";
 
 export default function ListTasks({ userId }: { userId: string }) {
-  const { data: tasks, isLoading, isError } = useTasks({ userId });
+  const { category } = useCategory();
+
+  const { data: tasks, isLoading, isError } = useTasks({ userId, category });
 
   if (isLoading) {
     return <div>Loading...</div>;

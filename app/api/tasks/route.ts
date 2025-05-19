@@ -5,9 +5,11 @@ import { supabase } from "@/lib/supabase/supabase";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
 
-  const { data, error } = await supabase
+  const userId = searchParams.get("userId");
+  const category = searchParams.get("category");
+
+  let query = supabase
     .from("tasks")
     .select(
       `
@@ -15,8 +17,13 @@ export async function GET(req: Request) {
       subtasks(*)
     `
     )
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .eq("user_id", userId);
+
+  if (category && category !== "all") {
+    query = query.eq("category", category);
+  }
+
+  const { data, error } = await query.order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -36,6 +43,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { task, userId }: { task: newTaskForm; userId: string } =
     await req.json();
+
   const { data, error } = await supabase
     .from("tasks")
     .insert({
@@ -43,6 +51,7 @@ export async function POST(req: Request) {
       title: task.title,
       priority: task.priority,
       time: task.time,
+      category: task.category,
     })
     .select();
 

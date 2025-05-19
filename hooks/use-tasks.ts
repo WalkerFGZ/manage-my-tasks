@@ -5,12 +5,19 @@ import { useAuth } from "@clerk/nextjs";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-export const useTasks = ({ userId }: { userId: string }) => {
+export const useTasks = ({
+  userId,
+  category,
+}: {
+  userId: string;
+  category: string;
+}) => {
   return useQuery({
-    queryKey: ["tasks", userId],
+    queryKey: ["tasks", userId, category],
     queryFn: async () => {
       const params = new URLSearchParams({
         userId,
+        category,
       });
       const res = await fetch(`/api/tasks?${params.toString()}`);
       if (!res.ok) {
@@ -24,6 +31,7 @@ export const useTasks = ({ userId }: { userId: string }) => {
 };
 
 export const useCreateTask = () => {
+  debugger;
   const { userId } = useAuth();
   const queryClient = useQueryClient();
 
@@ -50,27 +58,38 @@ export const useCreateTask = () => {
       await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
 
       const tempId = crypto.randomUUID();
-
       const optimisticTask = {
         id: tempId,
         ...newTask,
         is_completed: false,
       };
 
-      queryClient.setQueryData(["tasks", userId], (old: []) => [
+      queryClient.setQueryData(["tasks", userId, "all"], (old: Task[] = []) => [
         optimisticTask,
         ...old,
       ]);
 
+      if (newTask.category !== "all") {
+        queryClient.setQueryData(
+          ["tasks", userId, newTask.category],
+          (old: Task[] = []) => [optimisticTask, ...old]
+        );
+      }
+
       return { optimisticTask };
     },
     onError: (err, newTask, context) => {
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) =>
+      queryClient.setQueryData(["tasks", userId, "all"], (old: Task[]) =>
         old.filter((task) => task.id !== context?.optimisticTask.id)
       );
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", userId] });
+
+      if (newTask.category !== "all") {
+        queryClient.setQueryData(
+          ["tasks", userId, newTask.category],
+          (old: Task[]) =>
+            old.filter((task) => task.id !== context?.optimisticTask.id)
+        );
+      }
     },
   });
 };
@@ -102,14 +121,34 @@ export const useUpdateTask = () => {
 
       const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
 
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) =>
+      queryClient.setQueryData(["tasks", userId, "all"], (old: Task[] = []) =>
         old.map((task) => (task.id === taskData.id ? taskData : task))
       );
+
+      if (taskData.category && taskData.category !== "all") {
+        queryClient.setQueryData(
+          ["tasks", userId, taskData.category],
+          (old: Task[] = []) =>
+            old.map((task) => (task.id === taskData.id ? taskData : task))
+        );
+      }
 
       return { previousTasks };
     },
     onError: (err, taskData, context) => {
-      queryClient.setQueryData(["tasks", userId], context?.previousTasks);
+      if (context?.previousTasks) {
+        queryClient.setQueryData(
+          ["tasks", userId, "all"],
+          context.previousTasks
+        );
+
+        if (taskData.category && taskData.category !== "all") {
+          queryClient.setQueryData(
+            ["tasks", userId, taskData.category],
+            context.previousTasks
+          );
+        }
+      }
     },
   });
 };
@@ -119,14 +158,14 @@ export const useDeleteTask = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (task_id: string) => {
+    mutationFn: async (task: Task) => {
       const response = await fetch(`${BASE_URL}/api/tasks`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          taskId: task_id,
+          taskId: task.id,
         }),
       });
 
@@ -136,14 +175,22 @@ export const useDeleteTask = () => {
 
       return response.json();
     },
-    onMutate: async (task_id: string) => {
+    onMutate: async (task: Task) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
 
       const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
 
-      queryClient.setQueryData(["tasks", userId], (old: Task[]) =>
-        old.filter((task) => task.id !== task_id)
+      queryClient.setQueryData(["tasks", userId, "all"], (old: Task[] = []) =>
+        old.filter((currentTask) => currentTask.id !== task.id)
       );
+
+      if (task.category !== "all") {
+        queryClient.setQueryData(
+          ["tasks", userId, task.category],
+          (old: Task[] = []) =>
+            old.filter((currentTask) => currentTask.id !== task.id)
+        );
+      }
 
       return { previousTasks };
     },

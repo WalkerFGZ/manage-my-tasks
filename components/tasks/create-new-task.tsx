@@ -20,6 +20,7 @@ export default function CreateNewTask() {
   const createTask = useCreateTask();
 
   const handleSubmit = async (e: React.FormEvent, newTaskData: newTaskForm) => {
+    debugger;
     try {
       await createTask.mutateAsync(newTaskData);
     } catch (error) {

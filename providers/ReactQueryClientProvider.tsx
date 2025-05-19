@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+import { CategoryProvider } from "@/context/CategoryProvider";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useState } from "react";
 
@@ -23,8 +24,7 @@ export const ReactQueryClientProvider = ({
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />
-
-      {children}
+      <CategoryProvider>{children}</CategoryProvider>
     </QueryClientProvider>
   );
 };

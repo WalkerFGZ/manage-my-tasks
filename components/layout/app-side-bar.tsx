@@ -18,12 +18,12 @@ import AppSideBarFooter from "./app-side-bar-footer";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useCategory } from "@/context/CategoryProvider";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 
 export function AppSideBar() {
   const pathname = usePathname();
-  const [category, setCategory] = useState<string>("all");
+  const { category, setCategory } = useCategory();
   const items = [
     {
       title: "Home",

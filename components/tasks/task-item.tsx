@@ -1,5 +1,5 @@
-import { Card, CardContent } from "../ui/card";
 import {
+  Briefcase,
   Check,
   ChevronsUpDown,
   Clock,
@@ -7,7 +7,9 @@ import {
   MoreVertical,
   Plus,
   Trash,
+  User,
 } from "lucide-react";
+import { Card, CardContent } from "../ui/card";
 import {
   Collapsible,
   CollapsibleContent,
@@ -116,10 +118,10 @@ export default function TaskItem({ task }: { task: Task }) {
       );
     });
   };
-  const handleDeleteTask = async (task_id: string) => {
+  const handleDeleteTask = async (task: Task) => {
     setIsEditing(false);
     try {
-      await deleteTask.mutateAsync(task_id);
+      await deleteTask.mutateAsync(task);
     } catch (error) {
       toast.error("Error", {
         description:
@@ -142,13 +144,18 @@ export default function TaskItem({ task }: { task: Task }) {
         <Collapsible disabled={isEditing}>
           <div className="flex flex-row justify-between items-center">
             <div className="w-full flex flex-row items-center gap-3">
-              <div>
+              <div className="flex flex-row items-center gap-2">
                 <Checkbox
                   checked={task.is_completed}
                   className="cursor-pointer size-4.5"
                   onChange={() => handleCheckboxChange(task)}
                   disabled={isEditing}
                 />
+                {task.category === "work" ? (
+                  <Briefcase color="#f59e0b" className="size-5" />
+                ) : (
+                  <User color="#10b981" className="size-5" />
+                )}
               </div>
               <div className="w-full flex flex-col gap-0">
                 <div className="flex flex-row items-center justify-between">
@@ -216,7 +223,7 @@ export default function TaskItem({ task }: { task: Task }) {
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="flex items-center gap-2 cursor-pointer text-red-500 focus:text-red-500"
-                            onClick={() => handleDeleteTask(task.id)}
+                            onClick={() => handleDeleteTask(task)}
                           >
                             <Trash className="h-3.5 w-3.5" />
                             <span>Delete</span>
