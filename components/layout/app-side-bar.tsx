@@ -15,12 +15,15 @@ import {
 } from "../ui/sidebar";
 
 import AppSideBarFooter from "./app-side-bar-footer";
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export function AppSideBar() {
   const pathname = usePathname();
+  const [category, setCategory] = useState<string>("all");
   const items = [
     {
       title: "Home",
@@ -41,8 +44,13 @@ export function AppSideBar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarHeader>
-            <SidebarGroupLabel className="text-2xl text-white font-bold font-nunito my-2">
-              My Tasks 🏠
+            <SidebarGroupLabel className="text-2xl text-white font-bold font-nunito my-2 flex justify-center items-center">
+              <Image
+                src="/assets/logo_name.png"
+                alt="logo"
+                width={200}
+                height={200}
+              />
             </SidebarGroupLabel>
           </SidebarHeader>
           <SidebarGroupContent>
@@ -78,7 +86,11 @@ export function AppSideBar() {
               <SidebarMenuItem key={"all"}>
                 <SidebarMenuButton
                   asChild
-                  className="h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer"
+                  className={cn(
+                    "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
+                    category === "all" && "bg-muted text-foreground"
+                  )}
+                  onClick={() => setCategory("all")}
                 >
                   <article>
                     <List color="#6366f1" />
@@ -90,7 +102,11 @@ export function AppSideBar() {
               <SidebarMenuItem key={"personal"}>
                 <SidebarMenuButton
                   asChild
-                  className="h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer"
+                  className={cn(
+                    "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
+                    category === "personal" && "bg-muted text-foreground"
+                  )}
+                  onClick={() => setCategory("personal")}
                 >
                   <article>
                     <User color="#10b981" />
@@ -102,7 +118,11 @@ export function AppSideBar() {
               <SidebarMenuItem key={"work"}>
                 <SidebarMenuButton
                   asChild
-                  className="h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer"
+                  className={cn(
+                    "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
+                    category === "work" && "bg-muted text-foreground"
+                  )}
+                  onClick={() => setCategory("work")}
                 >
                   <article>
                     <Briefcase color="#f59e0b" />
