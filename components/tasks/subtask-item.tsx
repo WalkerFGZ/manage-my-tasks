@@ -120,7 +120,7 @@ export default function SubtaskItem({
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                handleUpdateSubTask(subtask);
+                handleCreateSubTask(subtask);
               }
             }}
           />

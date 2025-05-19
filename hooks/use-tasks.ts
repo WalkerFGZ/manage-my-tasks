@@ -100,12 +100,55 @@ export const useUpdateTask = () => {
     onMutate: async (taskData: Task) => {
       await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
 
+      const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
+
       queryClient.setQueryData(["tasks", userId], (old: Task[]) =>
         old.map((task) => (task.id === taskData.id ? taskData : task))
       );
+
+      return { previousTasks };
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", userId] });
+    onError: (err, taskData, context) => {
+      queryClient.setQueryData(["tasks", userId], context?.previousTasks);
+    },
+  });
+};
+
+export const useDeleteTask = () => {
+  const { userId } = useAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (task_id: string) => {
+      const response = await fetch(`${BASE_URL}/api/tasks`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          taskId: task_id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete task");
+      }
+
+      return response.json();
+    },
+    onMutate: async (task_id: string) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks", userId] });
+
+      const previousTasks = queryClient.getQueryData<Task[]>(["tasks", userId]);
+
+      queryClient.setQueryData(["tasks", userId], (old: Task[]) =>
+        old.filter((task) => task.id !== task_id)
+      );
+
+      return { previousTasks };
+    },
+    onError: (err, task_id, context) => {
+      queryClient.setQueryData(["tasks", userId], context?.previousTasks);
     },
   });
 };

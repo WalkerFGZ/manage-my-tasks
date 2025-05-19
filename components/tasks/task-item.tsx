@@ -1,15 +1,31 @@
 import { Card, CardContent } from "../ui/card";
-import { ChevronsUpDown, Clock, Plus } from "lucide-react";
+import {
+  Check,
+  ChevronsUpDown,
+  Clock,
+  Edit,
+  MoreVertical,
+  Plus,
+  Trash,
+} from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../animate-ui/radix/collapsible";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { cn, formatTimeForDisplay } from "@/lib/utils";
+import { useDeleteTask, useUpdateTask } from "@/hooks/use-tasks";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
+import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import SubtaskItem from "./subtask-item";
 import { Task } from "@/types";
@@ -17,10 +33,13 @@ import { priorityColors } from "@/lib/constants";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { useUpdateTask } from "@/hooks/use-tasks";
+import { useState } from "react";
 
 export default function TaskItem({ task }: { task: Task }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [taskTitle, setTaskTitle] = useState(task.title);
   const updateTask = useUpdateTask();
+  const deleteTask = useDeleteTask();
   const queryClient = useQueryClient();
   const { userId } = useAuth();
 
@@ -29,6 +48,9 @@ export default function TaskItem({ task }: { task: Task }) {
       ...task,
       is_completed: !task.is_completed,
     };
+
+    setIsEditing(false);
+
     try {
       await updateTask.mutateAsync(newData);
     } catch (error) {
@@ -40,7 +62,24 @@ export default function TaskItem({ task }: { task: Task }) {
       });
     }
   };
+  const handleUpdateTask = async (task: Task) => {
+    const updatedTask = {
+      ...task,
+      title: taskTitle,
+    };
+    setIsEditing(false);
 
+    try {
+      await updateTask.mutateAsync(updatedTask);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to update",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
   const handleAddNewSubTask = (taskId: string) => {
     const newSubTask = {
       id: crypto.randomUUID(),
@@ -77,6 +116,19 @@ export default function TaskItem({ task }: { task: Task }) {
       );
     });
   };
+  const handleDeleteTask = async (task_id: string) => {
+    setIsEditing(false);
+    try {
+      await deleteTask.mutateAsync(task_id);
+    } catch (error) {
+      toast.error("Error", {
+        description:
+          error instanceof Error ? error.message : "Failed to delete",
+        duration: 5000,
+        closeButton: true,
+      });
+    }
+  };
 
   return (
     <Card
@@ -87,7 +139,7 @@ export default function TaskItem({ task }: { task: Task }) {
       )}
     >
       <CardContent>
-        <Collapsible>
+        <Collapsible disabled={isEditing}>
           <div className="flex flex-row justify-between items-center">
             <div className="w-full flex flex-row items-center gap-3">
               <div>
@@ -95,13 +147,27 @@ export default function TaskItem({ task }: { task: Task }) {
                   checked={task.is_completed}
                   className="cursor-pointer size-4.5"
                   onChange={() => handleCheckboxChange(task)}
+                  disabled={isEditing}
                 />
               </div>
               <div className="w-full flex flex-col gap-0">
-                <div className="flex flex-row justify-between">
-                  <label className={cn(task.is_completed && "line-through")}>
-                    {task.title}
-                  </label>
+                <div className="flex flex-row items-center justify-between">
+                  {isEditing ? (
+                    <Input
+                      value={taskTitle}
+                      onChange={(e) => setTaskTitle(e.target.value)}
+                      className="w-full mr-2"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          handleUpdateTask(task);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <label className={cn(task.is_completed && "line-through")}>
+                      {taskTitle}
+                    </label>
+                  )}
 
                   <div className="flex flex-row gap-2">
                     <Badge
@@ -111,7 +177,7 @@ export default function TaskItem({ task }: { task: Task }) {
                       {task.priority}
                     </Badge>
                     {task.time != null && task.time !== "00:00:00" ? (
-                      <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit">
+                      <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit min-w-[100px]">
                         <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
                         <span className="text-[13px] text-purple-400">
                           {formatTimeForDisplay(task.time)}
@@ -119,6 +185,44 @@ export default function TaskItem({ task }: { task: Task }) {
                       </div>
                     ) : (
                       ""
+                    )}
+
+                    {isEditing ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleUpdateTask(task)}
+                        disabled={task.is_completed}
+                      >
+                        <Check className="h-2" />
+                      </Button>
+                    ) : (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger
+                          asChild
+                          disabled={task.is_completed}
+                        >
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="h-2" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem
+                            className="flex items-center gap-2 cursor-pointer"
+                            onClick={() => setIsEditing(true)}
+                          >
+                            <Edit className="h-2" />
+                            <span>Update</span>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            className="flex items-center gap-2 cursor-pointer text-red-500 focus:text-red-500"
+                            onClick={() => handleDeleteTask(task.id)}
+                          >
+                            <Trash className="h-3.5 w-3.5" />
+                            <span>Delete</span>
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
                   </div>
                 </div>
@@ -139,7 +243,19 @@ export default function TaskItem({ task }: { task: Task }) {
               <Plus
                 size={18}
                 className="cursor-pointer hover:text-purple-500 rounded-sm transition-all duration-200 hover:scale-110"
-                onClick={() => handleAddNewSubTask(task.id)}
+                onClick={() => {
+                  if (task.is_completed) {
+                    toast.info(
+                      "You cannot add a subtask to a completed task.",
+                      {
+                        duration: 5000,
+                        closeButton: true,
+                      }
+                    );
+                    return;
+                  }
+                  handleAddNewSubTask(task.id);
+                }}
               />
             </div>
 
