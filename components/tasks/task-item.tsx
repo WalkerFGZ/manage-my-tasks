@@ -177,7 +177,7 @@ export default function TaskItem({ task }: { task: Task }) {
                 />
                 <div className="flex items-center gap-1.5">
                   {task.category === "work" ? (
-                    <Briefcase color="#f59e0b" className="size-5" />
+                    <Briefcase color="#10b981" className="size-5" />
                   ) : (
                     <User color="#10b981" className="size-5" />
                   )}
