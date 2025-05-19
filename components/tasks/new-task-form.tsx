@@ -48,7 +48,7 @@ export default function NewTaskForm({
   return (
     <form onSubmit={onSubmit} className="mb-4">
       <div className="flex flex-col gap-2 font-nunito">
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Input
             placeholder="Task name"
             value={formData.title}
@@ -56,10 +56,11 @@ export default function NewTaskForm({
               setFormData({ ...formData, title: e.target.value })
             }
             required
+            className="w-full"
           />
 
           <Input
-            className="max-w-32 min-w-32 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="w-full sm:max-w-32 sm:min-w-32 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
             type="time"
             value={formData.time}
             onChange={(e) => setFormData({ ...formData, time: e.target.value })}
@@ -71,17 +72,23 @@ export default function NewTaskForm({
               setFormData({ ...formData, priority: value })
             }
           >
-            <SelectTrigger className="min-w-26">
+            <SelectTrigger className="w-full sm:min-w-26">
               <SelectValue placeholder="Select priority" />
             </SelectTrigger>
 
             <SelectContent>
               <SelectItem value="low">
-                <span />
+                <span className="w-2 h-2 rounded-full bg-green-500" />
                 Low
               </SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="medium">
+                <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                Medium
+              </SelectItem>
+              <SelectItem value="high">
+                <span className="w-2 h-2 rounded-full bg-red-500" />
+                High
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -91,7 +98,7 @@ export default function NewTaskForm({
               setFormData({ ...formData, category: value })
             }
           >
-            <SelectTrigger className="min-w-28">
+            <SelectTrigger className="w-full sm:min-w-28">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
 
@@ -123,8 +130,6 @@ export default function NewTaskForm({
           </RippleButton>
         </div>
       </div>
-
-      <div></div>
     </form>
   );
 }

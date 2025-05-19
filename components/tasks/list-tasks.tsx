@@ -1,6 +1,7 @@
 "use client";
 
-import { ListTodo } from "lucide-react";
+import { ListTodo, Loader2 } from "lucide-react";
+
 import { Task } from "@/types";
 import TaskItem from "./task-item";
 import { useCategory } from "@/context/CategoryProvider";
@@ -12,7 +13,11 @@ export default function ListTasks({ userId }: { userId: string }) {
   const { data: tasks, isLoading, isError } = useTasks({ userId, category });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
   }
 
   if (isError) {

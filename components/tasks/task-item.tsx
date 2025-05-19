@@ -143,6 +143,19 @@ export default function TaskItem({ task }: { task: Task }) {
     }
   };
 
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high":
+        return "bg-red-500";
+      case "medium":
+        return "bg-yellow-500";
+      case "low":
+        return "bg-green-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
   return (
     <Card
       className={cn(
@@ -162,11 +175,19 @@ export default function TaskItem({ task }: { task: Task }) {
                   onChange={() => handleCheckboxChange(task)}
                   disabled={isEditing}
                 />
-                {task.category === "work" ? (
-                  <Briefcase color="#f59e0b" className="size-5" />
-                ) : (
-                  <User color="#10b981" className="size-5" />
-                )}
+                <div className="flex items-center gap-1.5">
+                  {task.category === "work" ? (
+                    <Briefcase color="#f59e0b" className="size-5" />
+                  ) : (
+                    <User color="#10b981" className="size-5" />
+                  )}
+                  <div
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full sm:hidden",
+                      getPriorityColor(task.priority)
+                    )}
+                  />
+                </div>
               </div>
               <div className="w-full flex flex-col gap-0">
                 <div className="flex flex-row items-center justify-between">
@@ -182,20 +203,28 @@ export default function TaskItem({ task }: { task: Task }) {
                       }}
                     />
                   ) : (
-                    <label className={cn(task.is_completed && "line-through")}>
+                    <label
+                      className={cn(
+                        "truncate max-w-[150px] sm:max-w-none",
+                        task.is_completed && "line-through"
+                      )}
+                    >
                       {taskTitle}
                     </label>
                   )}
 
-                  <div className="flex flex-row gap-2">
+                  <div className="flex flex-row items-center gap-1 sm:gap-2">
                     <Badge
                       variant="outline"
-                      className={cn(priorityColors[task.priority], "ml-auto")}
+                      className={cn(
+                        priorityColors[task.priority],
+                        "ml-auto text-xs sm:text-sm hidden sm:inline-flex"
+                      )}
                     >
                       {task.priority}
                     </Badge>
                     {task.time != null && task.time !== "00:00:00" ? (
-                      <div className="flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit min-w-[100px]">
+                      <div className="hidden sm:flex items-center font-medium bg-primary/5 text-primary rounded-md px-2 py-0 w-fit min-w-[100px]">
                         <Clock className="mr-1.5 h-3.5 w-3.5 text-purple-300" />
                         <span className="text-[13px] text-purple-400">
                           {formatTimeForDisplay(task.time)}
