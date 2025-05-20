@@ -33,6 +33,15 @@ export const useCreateSharedTask = () => {
       await queryClient.cancelQueries({
         queryKey: ["tasks", userId, "shared"],
       });
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, "all"],
+      });
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, "work"],
+      });
+      await queryClient.cancelQueries({
+        queryKey: ["tasks", userId, "personal"],
+      });
 
       const tempId = crypto.randomUUID();
       const optimisticTask = {
