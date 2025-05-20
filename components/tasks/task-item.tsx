@@ -1,3 +1,8 @@
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  AvatarGroup,
+  AvatarGroupTooltip,
+} from "../animate-ui/components/avatar-group";
 import {
   Briefcase,
   Check,
@@ -6,7 +11,7 @@ import {
   Edit,
   MoreVertical,
   Plus,
-  Share,
+  Star,
   Trash,
   User,
 } from "lucide-react";
@@ -30,6 +35,7 @@ import { Button } from "../ui/button";
 import { Checkbox } from "../animate-ui/headless/checkbox";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
+import { ShareTask } from "./share-task";
 import SubtaskItem from "./subtask-item";
 import { Task } from "@/types";
 import { priorityColors } from "@/lib/constants";
@@ -159,11 +165,31 @@ export default function TaskItem({ task }: { task: Task }) {
   return (
     <Card
       className={cn(
-        "py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75",
+        "py-2 text-md font-nunito hover:border-purple-400 transition-all duration-200 ease-in-out hover:scale-[1.02] delay-75 relative",
         task.is_completed &&
           "bg-accent/20 hover:border-accent/20  opacity-60 hover:opacity-70 hover:scale-100"
       )}
     >
+      {task?.shared_tasks?.length > 0 && (
+        <div className="absolute -top-4 left-4 z-10">
+          <AvatarGroup className="h-6 -space-x-2.5">
+            {task?.shared_tasks?.map((sharedUser) => (
+              <Avatar
+                key={sharedUser.id}
+                className="h-8 w-8 border-2 border-background"
+              >
+                <AvatarImage src={sharedUser.shared_with_img} />
+                <AvatarFallback>
+                  {sharedUser.shared_with_name.charAt(0)}
+                </AvatarFallback>
+                <AvatarGroupTooltip>
+                  <p>{sharedUser.shared_with_name}</p>
+                </AvatarGroupTooltip>
+              </Avatar>
+            ))}
+          </AvatarGroup>
+        </div>
+      )}
       <CardContent>
         <Collapsible disabled={isEditing}>
           <div className="flex flex-row justify-between items-center">
@@ -177,9 +203,13 @@ export default function TaskItem({ task }: { task: Task }) {
                 />
                 <div className="flex items-center gap-1.5">
                   {task.category === "work" ? (
-                    <Briefcase color="#10b981" className="size-5" />
-                  ) : (
+                    <Briefcase color="#48fffd" className="size-5" />
+                  ) : task.category === "personal" ? (
                     <User color="#10b981" className="size-5" />
+                  ) : task.category === "shared" ? (
+                    <Star color="#f59e0b" className="size-5" />
+                  ) : (
+                    ""
                   )}
                   <div
                     className={cn(
@@ -268,18 +298,10 @@ export default function TaskItem({ task }: { task: Task }) {
                             <Trash className="h-3.5 w-3.5" />
                             <span>Delete</span>
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="flex items-center gap-2 cursor-pointer"
-                            onSelect={(e) => {
-                              e.preventDefault();
-                            }}
-                          >
-                            <Share className="h-3.5 w-3.5" />
-                            <span>Share (Coming Soon)</span>
-                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     )}
+                    <ShareTask task={task} />
                   </div>
                 </div>
               </div>

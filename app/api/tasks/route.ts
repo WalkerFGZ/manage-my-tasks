@@ -14,7 +14,8 @@ export async function GET(req: Request) {
     .select(
       `
       *,
-      subtasks(*)
+      subtasks(*),
+      shared_tasks(*)
     `
     )
     .eq("user_id", userId);
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
       priority: task.priority,
       time: task.time,
       category: task.category,
+      shared: false,
     })
     .select();
 
@@ -72,6 +74,8 @@ export async function PUT(req: Request) {
       priority: task.priority,
       time: task.time,
       is_completed: task.is_completed,
+      category: task.category,
+      shared: task.shared,
     })
     .eq("id", task.id)
     .select();

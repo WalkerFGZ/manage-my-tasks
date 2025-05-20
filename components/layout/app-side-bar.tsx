@@ -127,7 +127,6 @@ export function AppSideBar() {
 
               <SidebarMenuItem key={"shared"}>
                 <SidebarMenuButton
-                  disabled
                   className={cn(
                     "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
                     category === "shared" && "bg-muted text-foreground"
@@ -135,8 +134,8 @@ export function AppSideBar() {
                   onClick={() => setCategory("shared")}
                 >
                   <article className="flex flex-row items-center gap-2">
-                    <Star color="#f59e0b" />
-                    <span>Share With Friends (Coming Soon)</span>
+                    <Star color="#f59e0b" className="w-4 h-4" />
+                    <span>Shared</span>
                   </article>
                 </SidebarMenuButton>
               </SidebarMenuItem>
