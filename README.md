@@ -12,6 +12,12 @@ Better Tasks leverages Clerk for robust authentication and security features:
 - **Task Sharing**: Secure task sharing between users
 - **User Search**: Efficient user discovery and collaboration
 
+## Live Demo & Repository
+
+[Live Demo](https://manage-my-tasks.vercel.app/)
+
+[Repository](https://github.com/WalkerFGZ/manage-my-tasks)
+
 ## 📱 Application Preview
 
 ![Application Preview](./public/assets/demo_video.gif)
