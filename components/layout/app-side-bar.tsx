@@ -146,6 +146,16 @@ export function AppSideBar() {
       <SidebarFooter>
         <SidebarMenu className="w-full">
           <AppSideBarFooter />
+          <span className="text-xs text-muted-foreground">
+            Made with ❤️ by{" "}
+            <a
+              href="https://github.com/WalkerFGZ"
+              target="_blank"
+              className="text-blue-500"
+            >
+              Andres Gallego
+            </a>
+          </span>
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
