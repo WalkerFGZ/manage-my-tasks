@@ -127,6 +127,7 @@ export function AppSideBar() {
 
               <SidebarMenuItem key={"shared"}>
                 <SidebarMenuButton
+                  disabled
                   className={cn(
                     "h-12 px-3 text-md font-medium transition-colors rounded-2xl cursor-pointer",
                     category === "shared" && "bg-muted text-foreground"
@@ -135,7 +136,7 @@ export function AppSideBar() {
                 >
                   <article className="flex flex-row items-center gap-2">
                     <Star color="#f59e0b" className="w-4 h-4" />
-                    <span>Shared</span>
+                    <span>Shared (Refactoring)</span>
                   </article>
                 </SidebarMenuButton>
               </SidebarMenuItem>
